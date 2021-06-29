@@ -1,7 +1,7 @@
 import { Listener } from "discord-akairo";
 import { MessageEmbed, MessageReaction, TextChannel, User } from "discord.js";
 
-export default class ReadyEventListener extends Listener {
+export default class MessageReactionAddListener extends Listener {
   constructor() {
     super("messageReactionAdd", {
       emitter: "client",
@@ -37,7 +37,6 @@ export default class ReadyEventListener extends Listener {
     }
 
     const stars = users.cache.has(message.author.id) && count ? count - 1 : count ?? 0;
-    console.log(stars);
     if (stars < starboard.number) return;
 
     const starChannel = message.guild.channels.cache.get(starboard.channelID) as TextChannel;

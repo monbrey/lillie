@@ -6,9 +6,11 @@
   "scripts": {
     "start": "node index.js",
     "start:dev": "node -r source-map-support/register dist/index.js",
-    "monitor": "nodemon -r source-map-support/register dist/index.js",
+    "start:watch": "nodemon -r source-map-support/register dist/index.js",
+    "deploy": "node index.js --deploy",
+    "deploy:dev": "node dist/index.js --deploy",
     "build": "rimraf dist/ && tsc -p src/tsconfig.json",
-    "watch": "tsc -p src/tsconfig.json --watch",
+    "build:watch": "rimraf dist/ && tsc -p src/tsconfig.json --watch",
     "lint": "npx eslint src/**/*.ts --fix",
     "postversion": "git push && git push --tags"
   },
@@ -16,6 +18,7 @@
   "author": "monbrey",
   "license": "MIT",
   "dependencies": {
+    "common-tags": "^1.8.0",
     "discord-akairo": "^8.1.0",
     "discord.js": "^13.0.0-dev.6d3d00b44577a70e840f0187d6894043677c5329",
     "dotenv": "^10.0.0",
@@ -24,6 +27,7 @@
     "winston": "^3.3.3"
   },
   "devDependencies": {
+    "@types/common-tags": "^1.8.0",
     "@types/dotenv": "^8.2.0",
     "@types/node": "^15.12.4",
     "@types/ws": "^7.4.5",

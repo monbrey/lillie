@@ -1,6 +1,6 @@
 import { Listener } from "discord-akairo";
 
-export default class ReadyEventListener extends Listener {
+export default class ReadyListener extends Listener {
   constructor() {
     super("ready", {
       emitter: "client",
@@ -15,7 +15,7 @@ export default class ReadyEventListener extends Listener {
       console.log("Commands deployed");
     }
 
-    // await this.client.commands.fetchAll();
-    console.log("Ready");
+    await this.client.commands.fetch();
+    console.log(`[READY] Logged in as ${this.client.user?.tag}`);
   }
 }
