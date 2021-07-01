@@ -1,4 +1,3 @@
-import { ApplicationCommandOptionType } from "discord-api-types";
 import { CommandInteraction } from "discord.js";
 import { CommandExecutionError } from "../lib/errors/CommandExecutionError";
 import { ApplicationCommandModule } from "../lib/handlers/ApplicationCommandModule";
@@ -13,20 +12,20 @@ export default class StarboardCommand extends ApplicationCommandModule {
       options: [{
         name: "channel",
         description: "Channel to log messages to",
-        type: ApplicationCommandOptionType.CHANNEL,
+        type: "CHANNEL",
         required: true,
       }, {
         name: "emoji",
         description: "Reaction emoji to watch for on message (default ⭐)",
-        type: ApplicationCommandOptionType.STRING,
+        type: "STRING",
       }, {
         name: "number",
         description: "Number of reactions required to be logged (default 3)",
-        type: ApplicationCommandOptionType.INTEGER,
+        type: "INTEGER",
       }, {
         name: "restricted",
         description: "Make this a time-restricted starboard (one per month)",
-        type: ApplicationCommandOptionType.BOOLEAN,
+        type: "BOOLEAN",
       }],
     });
   }

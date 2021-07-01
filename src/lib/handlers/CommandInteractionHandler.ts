@@ -1,7 +1,6 @@
 import { resolve } from "path";
 import { AkairoHandler, LoadPredicate } from "discord-akairo";
-import { APIMessage } from "discord-api-types";
-import { Collection, CommandInteraction, Message } from "discord.js";
+import { Collection, CommandInteraction } from "discord.js";
 import { ApplicationCommandModule } from "./ApplicationCommandModule";
 import { LillieClient } from "../client/LillieClient";
 
@@ -42,21 +41,21 @@ export class InteractionHandler extends AkairoHandler {
     });
   }
 
-  async handle(interaction: CommandInteraction): Promise<void | Message | APIMessage> {
+  async handle(interaction: CommandInteraction): Promise<void> {
     if (!interaction.module) {
-      return interaction.reply({ content: `\`${interaction.commandName}\` is not yet implemented!`, ephemeral: true });
+      await interaction.reply({ content: `\`${interaction.commandName}\` is not yet implemented!`, ephemeral: true });
+      return;
     }
 
     try {
-      return await interaction.module.exec(interaction);
+      await interaction.module.exec(interaction);
     } catch (err) {
       console.log(err);
       // this.client.logger.error(err);
-      const method: keyof typeof interaction = interaction.replied ? "editReply" : "reply";
-      return interaction[method]({
+      const method = interaction[interaction.replied ? "editReply" : "reply"];
+      await method({
         content: `[${interaction.commandName}] ${err.message}`,
         ephemeral: true,
-        code: true,
       });
     }
   }

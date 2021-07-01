@@ -22,7 +22,7 @@ export default class GuildMemberRemoveListener extends Listener {
 
     const embed = new MessageEmbed()
       .setAuthor(`${member.user.tag} (${member.id})`, member.user.displayAvatarURL())
-      .setFooter("User joined")
+      .setFooter("User left")
       .setTimestamp();
 
     if (member.joinedTimestamp) {

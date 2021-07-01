@@ -1,4 +1,3 @@
-import { ApplicationCommandOptionType } from "discord-api-types";
 import { CommandInteraction } from "discord.js";
 import { CommandExecutionError } from "../lib/errors/CommandExecutionError";
 import { ApplicationCommandModule } from "../lib/handlers/ApplicationCommandModule";
@@ -13,7 +12,7 @@ export default class LogCommand extends ApplicationCommandModule {
       options: [{
         name: "channel",
         description: "Channel to output logs to",
-        type: ApplicationCommandOptionType.CHANNEL,
+        type: "CHANNEL",
         required: true,
       }],
     });
