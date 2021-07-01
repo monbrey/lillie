@@ -54,7 +54,7 @@ export default class MessageReactionAddListener extends Listener {
 
         const content = message.cleanContent;
         const [images, files] = message.attachments.partition(a => a.contentType?.includes("image") ?? false);
-        const embeds = message.embeds.map(e => new MessageEmbed(e));
+        const embeds = message.embeds.filter(e => e.type === "rich").map(e => new MessageEmbed(e));
 
         if (!message.author) return;
 
