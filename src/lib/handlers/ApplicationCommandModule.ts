@@ -1,18 +1,18 @@
 import { AkairoModule } from "discord-akairo";
 import {
-	ApplicationCommandData,
 	ApplicationCommandOptionData,
 	Awaited,
+	ChatInputApplicationCommandData,
 	CommandInteraction,
 	Snowflake,
 } from "discord.js";
 
-export interface ApplicationCommandModuleData extends ApplicationCommandData {
+export interface ChatInputCommandModuleData extends ChatInputApplicationCommandData {
 	guild?: boolean;
 	guilds?: Snowflake[];
 }
 
-export abstract class ApplicationCommandModule extends AkairoModule implements ApplicationCommandModuleData {
+export abstract class ApplicationCommandModule extends AkairoModule implements ChatInputCommandModuleData {
 	public name: string;
 	public description: string;
 	public guild: boolean;
@@ -20,7 +20,7 @@ export abstract class ApplicationCommandModule extends AkairoModule implements A
 	public defaultPermission: boolean;
 	public options?: ApplicationCommandOptionData[];
 
-	public constructor(options: ApplicationCommandModuleData) {
+	public constructor(options: ChatInputCommandModuleData) {
 		super(options.name);
 		this.name = options.name;
 		this.description = options.description;
