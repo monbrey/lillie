@@ -1,6 +1,6 @@
 import { resolve } from "path";
 import { AkairoHandler, LoadPredicate } from "discord-akairo";
-import { Collection, CommandInteraction } from "discord.js";
+import { Collection, CommandInteraction, IntegrationApplication } from "discord.js";
 import { ApplicationCommandModule } from "./ApplicationCommandModule";
 import { LillieClient } from "../client/LillieClient";
 
@@ -53,11 +53,21 @@ export class InteractionHandler extends AkairoHandler {
 		} catch (err) {
 			console.log(err);
 			// this.client.logger.error(err);
-			const method = interaction[interaction.replied ? "editReply" : "reply"];
-			await method({
-				content: `[${interaction.commandName}] ${err.message}`,
-				ephemeral: true,
-			});
+			if (interaction.replied) {
+				await interaction.followUp({
+					content: `[${interaction.commandName}] ${err.message}`,
+					ephemeral: true,
+				});
+			} else if (interaction.deferred) {
+				await interaction.editReply({
+					content: `[${interaction.commandName}] ${err.message}`,
+				});
+			} else {
+				await interaction.reply({
+					content: `[${interaction.commandName}] ${err.message}`,
+					ephemeral: true,
+				});
+			}
 		}
 	}
 
