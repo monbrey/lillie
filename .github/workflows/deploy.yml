@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - '*'
+  workflow_dispatch:
 
 jobs:
   build:
@@ -13,10 +14,10 @@ jobs:
     - name: Checkout
       uses: actions/checkout@master
 
-    - name: Use Node v12
+    - name: Use Node v16
       uses: actions/setup-node@v2.1.4
       with:
-        node-version: 12
+        node-version: 16
 
     - name: Build Project
       run:
@@ -28,10 +29,9 @@ jobs:
     - name: Deploy bot code
       uses: appleboy/scp-action@master
       env:
-        KEY: ${{ secrets.OVH_PRIVATE_KEY }}
-        HOST: ${{ secrets.OVH_HOST }}
-        USERNAME: ${{ secrets.OVH_USER }}
-        PASSPHRASE: ${{ secrets.OVH_PASSPHRASE }}
+        KEY: ${{ secrets.DO_SSHKEY }}
+        HOST: ${{ secrets.DO_HOST }}
+        USERNAME: ${{ secrets.DO_USERNAME }}
       with:
         source: "dist"
         target: "bots/lillie"
@@ -53,4 +53,4 @@ jobs:
         key: ${{ secrets.DO_SSHKEY }}
         host: ${{ secrets.DO_HOST }}
         username: ${{ secrets.DO_USERNAME }}
-        script: cd bots/lillie && npm install && pm2 restart ecosystem.config.js --only lillie --env=production
+        script: cd bots/lillie && npm install && cd ../../ && pm2 restart ecosystem.config.js --only lillie --env=production
