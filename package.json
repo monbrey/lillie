@@ -1,0 +1,33 @@
+{
+  "name": "lillie",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node --env-file=.env.development.local ./dist/bot/index.js",
+    "start:deploy": "node --env-file=.env.development.local ./dist/bot/index.js --deploy",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "tsc -p tsconfig.json --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@discordjs/core": "^2.0.0",
+    "@discordjs/formatters": "^0.5.0",
+    "@discordjs/rest": "^2.4.0",
+    "@discordjs/ws": "^2.0.0",
+    "discord-api-types": "^0.37.97",
+    "postgres": "^3.4.4"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.10.0",
+    "@types/eslint__js": "^8.42.3",
+    "@types/node": "^22.5.4",
+    "eslint": "^8.57.0",
+    "eslint-config-neon": "^0.2.0",
+    "typescript": "^5.5.4",
+    "typescript-eslint": "^8.4.0"
+  }
+}
