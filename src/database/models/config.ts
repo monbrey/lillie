@@ -49,7 +49,7 @@ export async function updateConfigForGuild(config: Partial<Config> & { guild_id:
 	return rows.length ? rows[0] as Config : null;
 }
 
-export async function upsertConfigForGuild(config: Partial<Config> & { guild_id: Snowflake }) {
+export async function upsertConfigForGuild(config: Partial<Config> & { guild_id: Snowflake }): Promise<Config[]> {
 	return sql`
 		insert into config
 		${sql(config)}

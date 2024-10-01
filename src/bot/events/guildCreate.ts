@@ -4,9 +4,9 @@ import type { AsyncEventEmitterListenerForEvent } from "@vladfrangu/async_event_
 import { createConfigForGuild } from "../../database/models/config.js";
 
 export const name = GatewayDispatchEvents.GuildCreate;
-export const execute: AsyncEventEmitterListenerForEvent<Client, typeof name> = async ({ data, api }) => {
+export const execute: AsyncEventEmitterListenerForEvent<Client, typeof name> = async ({ data }) => {
 	try {
-		const result = await createConfigForGuild({ guild_id: data.id });
+		await createConfigForGuild({ guild_id: data.id });
 	} catch (error) {
 		console.error(error);
 	}

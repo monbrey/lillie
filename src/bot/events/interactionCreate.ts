@@ -1,11 +1,8 @@
-import type { APIContextMenuInteraction, APIMessageApplicationCommandInteraction, Client } from "@discordjs/core";
-import { ApplicationCommandType, GatewayDispatchEvents, InteractionType } from "@discordjs/core";
+import type { Client } from "@discordjs/core";
+import { GatewayDispatchEvents, InteractionType } from "@discordjs/core";
 import type { AsyncEventEmitterListenerForEvent } from "@vladfrangu/async_event_emitter";
 import { isChatInputApplicationCommandInteraction } from "discord-api-types/utils";
 import { handleChatInputCommand } from "../handlers/chatInputCommand.js";
-
-const isMessageContextMenuApplicationCommandInteraction = (interaction: APIContextMenuInteraction): interaction is APIMessageApplicationCommandInteraction =>
-	interaction.data.type === ApplicationCommandType.Message;
 
 export const name = GatewayDispatchEvents.InteractionCreate;
 export const execute: AsyncEventEmitterListenerForEvent<Client, typeof name> = async ({ data, api }) => {

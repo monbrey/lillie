@@ -63,7 +63,7 @@ export async function incrementScoreForStar(id: Snowflake, premium: boolean) {
 	`;
 
 	if (rows.length > 1) throw new Error("Too many rows returned.");
-	return rows.length ? rows[0] : null;
+	return rows.length ? rows[0] as Star : null;
 }
 
 export async function decrementScoreForStar(id: Snowflake, premium: boolean) {
@@ -77,5 +77,26 @@ export async function decrementScoreForStar(id: Snowflake, premium: boolean) {
 	`;
 
 	if (rows.length > 1) throw new Error("Too many rows returned.");
-	return rows.length ? rows[0] : null;
+	return rows.length ? rows[0] as Star : null;
+}
+
+export async function getTopStarsForGuild(guild_id: Snowflake): Promise<Star[]> {
+	return sql`
+		select *
+		from stars
+		where guild_id = ${guild_id}
+		order by score desc
+		limit 10
+	`;
+}
+
+export async function getTopAuthorsForGuild(guild_id: Snowflake): Promise<Star[]> {
+	return sql`
+		select author_id, sum(score) as score
+		from stars
+		where guild_id = ${guild_id}
+		group by author_id
+		order by score desc
+		limit 10
+	`;
 }

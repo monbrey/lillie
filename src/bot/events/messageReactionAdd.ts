@@ -3,8 +3,7 @@ import { GatewayDispatchEvents } from "@discordjs/core";
 import { messageLink } from "@discordjs/formatters";
 import type { AsyncEventEmitterListenerForEvent } from "@vladfrangu/async_event_emitter";
 import { getConfigForGuild } from "../../database/models/config.js";
-import type { Star } from "../../database/models/stars.js";
-import { createStar, getStarBySourceId, incrementScoreForStar } from "../../database/models/stars.js";
+import { createStar, getStarBySourceId, incrementScoreForStar, type Star } from "../../database/models/stars.js";
 
 export const name = GatewayDispatchEvents.MessageReactionAdd;
 export const execute: AsyncEventEmitterListenerForEvent<Client, typeof name> = async ({ data, api }) => {
