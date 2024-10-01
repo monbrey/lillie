@@ -14,8 +14,6 @@ for (const file of command_files) {
 }
 
 export const handleChatInputCommand = async (api: API, interaction: APIChatInputApplicationCommandInteraction) => {
-	console.log(interaction.data.name);
-
 	const command = commands.get(interaction.data.name);
 	if (!command) {
 		await api.interactions.reply(interaction.id, interaction.token, { content: `No command \`${interaction.data.name} was found.\`` });
