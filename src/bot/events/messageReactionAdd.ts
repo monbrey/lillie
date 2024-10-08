@@ -4,6 +4,7 @@ import { messageLink } from "@discordjs/formatters";
 import type { AsyncEventEmitterListenerForEvent } from "@vladfrangu/async_event_emitter";
 import { getConfigForGuild } from "../../database/models/config.js";
 import { createStar, getStarBySourceId, incrementScoreForStar, type Star } from "../../database/models/stars.js";
+import { getLastGoldsForUser, insertGoldForUser } from "../../database/models/golds.js";
 
 export const name = GatewayDispatchEvents.MessageReactionAdd;
 export const execute: AsyncEventEmitterListenerForEvent<Client, typeof name> = async ({ data, api }) => {
@@ -19,12 +20,35 @@ export const execute: AsyncEventEmitterListenerForEvent<Client, typeof name> = a
 
 	// Check if this emoji matches the config
 	const star = emoji === config.standard_emoji;
-	const premium = emoji === config.gold_emoji;
-	if (!star && !premium) return;
+	const gold = emoji === config.gold_emoji;
+	if (!star && !gold) return;
+
+	// Check if this message already exists on a starboard
+	const db_star = await getStarBySourceId(data.message_id);
+
+	if (gold) {
+		// If it's the gold emoji, check how many theyre entitled to
+		const member = await api.guilds.getMember(data.guild_id, data.user_id);
+		const quota = member.premium_since ? 2 : 1;
+		// validate that the quota isnt exceeded
+		const lastGold = await getLastGoldsForUser(data.user_id, quota);
+		if (lastGold.length) {
+			const dates = lastGold.map(g => new Date(g.timestamp));
+			const today = new Date();
+			if (dates.every(d => d.getFullYear() === today.getFullYear() && d.getMonth() === today.getMonth())) {
+				const dm = await api.users.createDM(data.user_id);
+				await api.channels.createMessage(dm.id, { content: "You've already used your gold reaction(s) this month. Try again next month!" });
+				return;
+			}
+		} else {
+			// Otherwise record the gold reaction usage
+			await insertGoldForUser(data.user_id);
+		}
+	}
 
 	// Set the props for writing to a starboard
-	const target_channel = premium ? config.gold_channel_id : config.standard_channel_id;
-	const threshold = premium ? config.gold_threshold : config.standard_threshold;
+	const target_channel = gold ? config.gold_channel_id : config.standard_channel_id;
+	const threshold = gold ? config.gold_threshold : config.standard_threshold;
 	if (!target_channel) return;
 
 	// Fetch the message details
@@ -63,14 +87,11 @@ export const execute: AsyncEventEmitterListenerForEvent<Client, typeof name> = a
 		}
 	}
 
-	// Check if this message already exists on a starboard
-	const db_star = await getStarBySourceId(data.message_id);
-
 	try {
 		if (db_star) {
 			// Update the existing message
 			await api.channels.editMessage(db_star.board_channel_id, db_star.board_message_id, { embeds });
-			await incrementScoreForStar(db_star.message_id, premium);
+			await incrementScoreForStar(db_star.message_id, gold);
 		} else {
 			// Post and record a new message to the starboard
 			const star_message = await api.channels.createMessage(target_channel, { embeds });
@@ -81,8 +102,8 @@ export const execute: AsyncEventEmitterListenerForEvent<Client, typeof name> = a
 				channel_id: data.channel_id,
 				guild_id: data.guild_id,
 				message_id: data.message_id,
-				premium_score: premium ? count : 0,
-				score: premium ? 0 : count
+				premium_score: gold ? count : 0,
+				score: gold ? 0 : count
 			};
 			await createStar(star_data);
 		}

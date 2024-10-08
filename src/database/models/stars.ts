@@ -1,4 +1,4 @@
-import type { Snowflake } from "discord-api-types/globals.js";
+import type { Snowflake } from "discord-api-types/globals";
 import { sql } from "../index.js";
 
 export type Star = {
