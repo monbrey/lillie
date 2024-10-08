@@ -20,12 +20,16 @@ export const handleChatInputCommand = async (api: API, interaction: APIChatInput
 			interaction.id,
 			interaction.token,
 			{
-				content: `No command \`${interaction.data.name} was found. It may have been removed, or temporarily disabled. If you believe this is incorrect, contact monbrey.\``,
+				content: `No command \`${interaction.data.name}\` was found. It may have been removed, or temporarily disabled. If you believe this is incorrect, contact monbrey.`,
 				flags: MessageFlags.Ephemeral,
 			},
 		);
 		return;
 	}
 
-	await command(api, interaction);
+	try {
+		await command(api, interaction);
+	} catch (error) {
+		console.error(error);
+	}
 };
