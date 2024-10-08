@@ -10,4 +10,4 @@ export const execute: AsyncEventEmitterListenerForEvent<Client, typeof name> = a
 	} catch (error) {
 		console.error(error);
 	}
-}
+};

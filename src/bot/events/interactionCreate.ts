@@ -10,8 +10,10 @@ export const execute: AsyncEventEmitterListenerForEvent<Client, typeof name> = a
 		case InteractionType.Ping:
 			break;
 		case InteractionType.ApplicationCommand:
-			if (isChatInputApplicationCommandInteraction(data))
+			if (isChatInputApplicationCommandInteraction(data)) {
 				await handleChatInputCommand(api, data);
+			}
+
 			break;
 		case InteractionType.MessageComponent:
 			// await Handlers.messageComponentInteraction(api, data);
@@ -23,4 +25,4 @@ export const execute: AsyncEventEmitterListenerForEvent<Client, typeof name> = a
 			// await handleModalSubmitInteraction(api, data);
 			break;
 	}
-}
+};

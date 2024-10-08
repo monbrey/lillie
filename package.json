@@ -20,6 +20,7 @@
     "@discordjs/rest": "^2.4.0",
     "@discordjs/ws": "^2.0.0",
     "discord-api-types": "^0.37.97",
+    "eslint-config-neon": "^0.2.0",
     "postgres": "^3.4.4"
   },
   "devDependencies": {
@@ -27,7 +28,6 @@
     "@types/eslint__js": "^8.42.3",
     "@types/node": "^22.5.4",
     "eslint": "^8.57.1",
-    "eslint-config-neon": "^0.2.0",
     "globals": "^15.10.0",
     "rimraf": "^6.0.1",
     "typescript": "^5.5.4",

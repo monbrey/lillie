@@ -1,11 +1,20 @@
-import globals from "globals";
-import pluginJs from "@eslint/js";
-import tseslint from "typescript-eslint";
+import { common, typescript } from "eslint-config-neon";
+import merge from "lodash.merge";
 
-
-export default [
-  {files: ["**/*.{js,mjs,cjs,ts}"]},
-  {languageOptions: { globals: globals.browser }},
-  pluginJs.configs.recommended,
-  ...tseslint.configs.recommended,
+/**
+ * @type {import('@typescript-eslint/utils').TSESLint.FlatConfig.ConfigArray}
+ */
+const config = [
+	...[...common, ...typescript].map((config) =>
+		merge(config, {
+			files: ["src/**/*.ts"],
+			languageOptions: {
+				parserOptions: {
+					project: "tsconfig.json",
+				},
+			},
+		}),
+	),
 ];
+
+export default config;

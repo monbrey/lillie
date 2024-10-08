@@ -2,18 +2,24 @@ import type { Snowflake } from "discord-api-types/globals";
 import { sql } from "../index.js";
 
 export type Gold = {
-	user_id: Snowflake;
 	timestamp: number;
-}
+	user_id: Snowflake;
+};
 
 export async function insertGoldForUser(id: Snowflake) {
 	const rows = await sql`
 		insert into golds 
-		${sql({ user_id: id, timestamp: Date.now() })} 
+		${sql({
+		user_id: id,
+		timestamp: Date.now(),
+	})} 
 		returning *
 	`;
 
-	if (rows.length > 1) throw new Error("Too many rows returned.");
+	if (rows.length > 1) {
+		throw new Error("Too many rows returned.");
+	}
+
 	return rows.length ? rows[0] as Gold : null;
 }
 

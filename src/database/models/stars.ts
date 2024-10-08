@@ -10,7 +10,7 @@ export type Star = {
 	message_id: Snowflake;
 	premium_score: number;
 	score: number;
-}
+};
 
 export async function getStarBySourceId(id: Snowflake) {
 	const rows = await sql`
@@ -19,7 +19,10 @@ export async function getStarBySourceId(id: Snowflake) {
 		where message_id = ${id}
 	`;
 
-	if (rows.length > 1) throw new Error("Too many rows returned.");
+	if (rows.length > 1) {
+		throw new Error("Too many rows returned.");
+	}
+
 	return rows.length ? rows[0] as Star : null;
 }
 
@@ -30,7 +33,10 @@ export async function getStarByStarId(id: Snowflake) {
 		where board_message_id = ${id}
 	`;
 
-	if (rows.length > 1) throw new Error("Too many rows returned.");
+	if (rows.length > 1) {
+		throw new Error("Too many rows returned.");
+	}
+
 	return rows.length ? rows[0] : null;
 }
 
@@ -41,7 +47,10 @@ export async function createStar(star: Star) {
 		returning *
 	`;
 
-	if (rows.length > 1) throw new Error("Too many rows returned.");
+	if (rows.length > 1) {
+		throw new Error("Too many rows returned.");
+	}
+
 	return rows.length ? rows[0] : null;
 }
 
@@ -53,7 +62,7 @@ export async function deleteStarBySourceId(id: Snowflake) {
 }
 
 export async function incrementScoreForStar(id: Snowflake, premium: boolean) {
-	const col = premium ? 'premium_score' : 'score';
+	const col = premium ? "premium_score" : "score";
 
 	const rows = await sql`
 		update stars 
@@ -62,12 +71,15 @@ export async function incrementScoreForStar(id: Snowflake, premium: boolean) {
 		returning *
 	`;
 
-	if (rows.length > 1) throw new Error("Too many rows returned.");
+	if (rows.length > 1) {
+		throw new Error("Too many rows returned.");
+	}
+
 	return rows.length ? rows[0] as Star : null;
 }
 
 export async function decrementScoreForStar(id: Snowflake, premium: boolean) {
-	const col = premium ? 'premium_score' : 'score';
+	const col = premium ? "premium_score" : "score";
 
 	const rows = await sql`
 		update stars 
@@ -76,7 +88,10 @@ export async function decrementScoreForStar(id: Snowflake, premium: boolean) {
 		returning *
 	`;
 
-	if (rows.length > 1) throw new Error("Too many rows returned.");
+	if (rows.length > 1) {
+		throw new Error("Too many rows returned.");
+	}
+
 	return rows.length ? rows[0] as Star : null;
 }
 

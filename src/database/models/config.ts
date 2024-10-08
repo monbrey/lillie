@@ -9,9 +9,9 @@ export type Config = {
 	standard_channel_id?: Snowflake;
 	standard_emoji?: string;
 	standard_threshold: number;
-}
+};
 
-export type PartialConfig = Partial<Config> & { guild_id: Snowflake }
+export type PartialConfig = Partial<Config> & { guild_id: Snowflake; };
 
 export async function getConfigForGuild(guild_id: Snowflake) {
 	const rows = await sql`
@@ -20,7 +20,10 @@ export async function getConfigForGuild(guild_id: Snowflake) {
 		where guild_id = ${guild_id}
 	`;
 
-	if (rows.length > 1) throw new Error("Too many rows returned.");
+	if (rows.length > 1) {
+		throw new Error("Too many rows returned.");
+	}
+
 	return rows.length ? rows[0] as Config : null;
 }
 
@@ -33,11 +36,14 @@ export async function createConfigForGuild(config: PartialConfig) {
 		returning *
 	`;
 
-	if (rows.length > 1) throw new Error("Too many rows returned.");
+	if (rows.length > 1) {
+		throw new Error("Too many rows returned.");
+	}
+
 	return rows.length ? rows[0] as Config : null;
 }
 
-export async function updateConfigForGuild(config: Partial<Config> & { guild_id: Snowflake }) {
+export async function updateConfigForGuild(config: Partial<Config> & { guild_id: Snowflake; }) {
 	const rows = await sql`
 		update config 
 		set ${sql(config)} 
@@ -45,16 +51,19 @@ export async function updateConfigForGuild(config: Partial<Config> & { guild_id:
 		returning *
 	`;
 
-	if(rows.length > 1) throw new Error("Too many rows returned.");
+	if (rows.length > 1) {
+		throw new Error("Too many rows returned.");
+	}
+
 	return rows.length ? rows[0] as Config : null;
 }
 
-export async function upsertConfigForGuild(config: Partial<Config> & { guild_id: Snowflake }): Promise<Config[]> {
+export async function upsertConfigForGuild(config: Partial<Config> & { guild_id: Snowflake; }): Promise<Config[]> {
 	return sql`
 		insert into config
 		${sql(config)}
 		on conflict (guild_id) do update
 		set ${sql(config)}
 		returning *
-	`
+	`;
 }

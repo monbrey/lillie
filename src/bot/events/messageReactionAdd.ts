@@ -3,17 +3,21 @@ import { GatewayDispatchEvents } from "@discordjs/core";
 import { messageLink } from "@discordjs/formatters";
 import type { AsyncEventEmitterListenerForEvent } from "@vladfrangu/async_event_emitter";
 import { getConfigForGuild } from "../../database/models/config.js";
-import { createStar, getStarBySourceId, incrementScoreForStar, type Star } from "../../database/models/stars.js";
 import { getLastGoldsForUser, insertGoldForUser } from "../../database/models/golds.js";
+import { createStar, getStarBySourceId, incrementScoreForStar, type Star } from "../../database/models/stars.js";
 
 export const name = GatewayDispatchEvents.MessageReactionAdd;
 export const execute: AsyncEventEmitterListenerForEvent<Client, typeof name> = async ({ data, api }) => {
 	// Ignore DMs
-	if (!data.guild_id) return;
+	if (!data.guild_id) {
+		return;
+	}
 
 	// Fetch and validate configuration exists
 	const config = await getConfigForGuild(data.guild_id);
-	if (!config) return;
+	if (!config) {
+		return;
+	}
 
 	// Extract reaction emoji from the data (id for custom, name for unicode)
 	const emoji = data.emoji.id ?? data.emoji.name;
@@ -21,7 +25,9 @@ export const execute: AsyncEventEmitterListenerForEvent<Client, typeof name> = a
 	// Check if this emoji matches the config
 	const star = emoji === config.standard_emoji;
 	const gold = emoji === config.gold_emoji;
-	if (!star && !gold) return;
+	if (!star && !gold) {
+		return;
+	}
 
 	// Check if this message already exists on a starboard
 	const db_star = await getStarBySourceId(data.message_id);
@@ -33,9 +39,9 @@ export const execute: AsyncEventEmitterListenerForEvent<Client, typeof name> = a
 		// validate that the quota isnt exceeded
 		const lastGold = await getLastGoldsForUser(data.user_id, quota);
 		if (lastGold.length) {
-			const dates = lastGold.map(g => new Date(g.timestamp));
+			const dates = lastGold.map((gold) => new Date(gold.timestamp));
 			const today = new Date();
-			if (dates.every(d => d.getFullYear() === today.getFullYear() && d.getMonth() === today.getMonth())) {
+			if (dates.every((date) => date.getFullYear() === today.getFullYear() && date.getMonth() === today.getMonth())) {
 				const dm = await api.users.createDM(data.user_id);
 				await api.channels.createMessage(dm.id, { content: "You've already used your gold reaction(s) this month. Try again next month!" });
 				return;
@@ -49,37 +55,49 @@ export const execute: AsyncEventEmitterListenerForEvent<Client, typeof name> = a
 	// Set the props for writing to a starboard
 	const target_channel = gold ? config.gold_channel_id : config.standard_channel_id;
 	const threshold = gold ? config.gold_threshold : config.standard_threshold;
-	if (!target_channel) return;
+	if (!target_channel) {
+		return;
+	}
 
 	// Fetch the message details
 	const { attachments, author, content, reactions } = await api.channels.getMessage(data.channel_id, data.message_id);
 
 	// Check if the reaction count exceeds the threshold
-	const count = reactions?.find(reac => (reac.emoji.id ?? reac.emoji.name) === emoji)?.count ?? 0;
-	if (count < threshold) return;
+	const count = reactions?.find((reac) => (reac.emoji.id ?? reac.emoji.name) === emoji)?.count ?? 0;
+	if (count < threshold) {
+		return;
+	}
 
 	// Draft the embed
-	const embeds: APIEmbed[] = [{
-		author: {
-			name: `${author.username}  |  ${count}${emoji}`,
-			icon_url: author.avatar ? api.rest.cdn.avatar(author.id, author.avatar, { forceStatic: true }) : undefined,
+	const embeds: APIEmbed[] = [
+		{
+			author: {
+				name: `${author.username}  |  ${count}${emoji}`,
+				icon_url: author.avatar ? api.rest.cdn.avatar(author.id, author.avatar, { forceStatic: true }) : undefined,
+			},
+			// Gold
+			color: 0xF1C40F,
+			description: content,
+			fields: [
+				{
+					name: "Link to message",
+					value: messageLink(data.channel_id, data.message_id),
+				},
+			],
+			timestamp: new Date().toISOString(),
+			url: messageLink(data.channel_id, data.message_id),
 		},
-		color: 0xf1c40f, // Gold
-		description: content,
-		fields: [{
-			name: "Link to message",
-			value: messageLink(data.channel_id, data.message_id)
-		}],
-		timestamp: new Date().toISOString(),
-		url: messageLink(data.channel_id, data.message_id)
-	}];
+	];
 
 	// Map attachments, using the embed multi-image trick
 	if (attachments.length) {
 		for (const att of attachments) {
 			switch (att.content_type) {
-				case 'image':
-					embeds.push({ url: messageLink(data.channel_id, data.message_id), image: { url: att.url } });
+				case "image":
+					embeds.push({
+						url: messageLink(data.channel_id, data.message_id),
+						image: { url: att.url },
+					});
 					break;
 				default:
 					break;
@@ -103,7 +121,7 @@ export const execute: AsyncEventEmitterListenerForEvent<Client, typeof name> = a
 				guild_id: data.guild_id,
 				message_id: data.message_id,
 				premium_score: gold ? count : 0,
-				score: gold ? 0 : count
+				score: gold ? 0 : count,
 			};
 			await createStar(star_data);
 		}

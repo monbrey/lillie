@@ -7,11 +7,15 @@ import { decrementScoreForStar, deleteStarBySourceId, getStarBySourceId } from "
 export const name = GatewayDispatchEvents.MessageReactionRemove;
 export const execute: AsyncEventEmitterListenerForEvent<Client, typeof name> = async ({ data, api }) => {
 	// Ignore DMs
-	if (!data.guild_id) return;
+	if (!data.guild_id) {
+		return;
+	}
 
 	// Fetch and validate configuration exists for this guild
 	const config = await getConfigForGuild(data.guild_id);
-	if (!config) return;
+	if (!config) {
+		return;
+	}
 
 	// Extract reaction emoji from the data (id for custom, name for unicode)
 	const emoji = data.emoji.id ?? data.emoji.name;
@@ -19,14 +23,18 @@ export const execute: AsyncEventEmitterListenerForEvent<Client, typeof name> = a
 	// Check if this emoji matches the config
 	const star = emoji === config.standard_emoji;
 	const premium = emoji === config.gold_emoji;
-	if (!star && !premium) return;
+	if (!star && !premium) {
+		return;
+	}
 
 	// Determine thje relevant threshold
 	const threshold = premium ? config.gold_threshold : config.standard_threshold;
 
 	// Fetch any existing record for this message
 	const db_star = await getStarBySourceId(data.message_id);
-	if (!db_star) return;
+	if (!db_star) {
+		return;
+	}
 
 	// Fetch the source message details
 	const { reactions, author } = await api.channels.getMessage(data.channel_id, data.message_id);
@@ -35,7 +43,7 @@ export const execute: AsyncEventEmitterListenerForEvent<Client, typeof name> = a
 	const { embeds } = await api.channels.getMessage(db_star.board_channel_id, db_star.board_message_id);
 
 	// Get reaction count
-	const count = reactions?.find(reac => (reac.emoji.id ?? reac.emoji.name) === emoji)?.count ?? 0;
+	const count = reactions?.find((reac) => (reac.emoji.id ?? reac.emoji.name) === emoji)?.count ?? 0;
 
 	try {
 		if (count >= threshold) {
