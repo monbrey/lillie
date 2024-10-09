@@ -1,7 +1,6 @@
-import type { API, APIChatInputApplicationCommandInteraction, APIUser, RESTPostAPIChatInputApplicationCommandsJSONBody, Snowflake } from "@discordjs/core";
+import type { API, APIChatInputApplicationCommandGuildInteraction, APIUser, RESTPostAPIChatInputApplicationCommandsJSONBody, Snowflake } from "@discordjs/core";
 import { ApplicationIntegrationType, InteractionContextType } from "@discordjs/core";
 import { messageLink } from "@discordjs/formatters";
-import { isApplicationCommandGuildInteraction } from "discord-api-types/utils/v10";
 import { getTopAuthorsForGuild, getTopStarsForGuild } from "../../../database/models/stars.js";
 
 export const data: RESTPostAPIChatInputApplicationCommandsJSONBody = {
@@ -11,12 +10,7 @@ export const data: RESTPostAPIChatInputApplicationCommandsJSONBody = {
 	integration_types: [ApplicationIntegrationType.GuildInstall],
 };
 
-export const execute = async (api: API, interaction: APIChatInputApplicationCommandInteraction) => {
-	// Ignore anything not from a guild
-	if (!isApplicationCommandGuildInteraction(interaction)) {
-		return;
-	}
-
+export const execute = async (api: API, interaction: APIChatInputApplicationCommandGuildInteraction) => {
 	// Defer while the fetching happens
 	await api.interactions.defer(interaction.id, interaction.token);
 

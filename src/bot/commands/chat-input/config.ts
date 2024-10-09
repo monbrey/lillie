@@ -1,4 +1,4 @@
-import type { API, APIChatInputApplicationCommandInteraction, RESTPostAPIChatInputApplicationCommandsJSONBody, Snowflake } from "@discordjs/core";
+import type { API, APIChatInputApplicationCommandGuildInteraction, RESTPostAPIChatInputApplicationCommandsJSONBody, Snowflake } from "@discordjs/core";
 import { ApplicationCommandOptionType, ApplicationIntegrationType, ChannelType, InteractionContextType, MessageFlags, PermissionFlagsBits } from "@discordjs/core";
 import { isApplicationCommandGuildInteraction } from "discord-api-types/utils/v10";
 import { updateConfigForGuild, type Config } from "../../../database/models/config.js";
@@ -61,7 +61,7 @@ export const data: RESTPostAPIChatInputApplicationCommandsJSONBody = {
 	default_member_permissions: PermissionFlagsBits.ManageGuild.toString(),
 };
 
-export const execute = async (api: API, interaction: APIChatInputApplicationCommandInteraction) => {
+export const execute = async (api: API, interaction: APIChatInputApplicationCommandGuildInteraction) => {
 	// Ignore anything not from a guild
 	if (!isApplicationCommandGuildInteraction(interaction)) {
 		return;
