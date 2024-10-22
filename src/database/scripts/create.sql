@@ -24,7 +24,7 @@ DROP DATABASE IF EXISTS lillie;
 -- Name: lillie; Type: DATABASE; Schema: -; Owner: postgres
 --
 
-CREATE DATABASE lillie WITH TEMPLATE = template0 ENCODING = 'UTF8' LOCALE_PROVIDER = libc LOCALE = 'English_Australia.1252';
+CREATE DATABASE lillie ENCODING = 'UTF8';
 
 
 ALTER DATABASE lillie OWNER TO postgres;
