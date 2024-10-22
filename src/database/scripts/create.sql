@@ -5,7 +5,31 @@
 -- Dumped from database version 16.4
 -- Dumped by pg_dump version 16.4
 
--- Started on 2024-10-22 14:07:33
+-- Started on 2024-10-22 14:11:46
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+DROP DATABASE IF EXISTS lillie;
+--
+-- TOC entry 4791 (class 1262 OID 16412)
+-- Name: lillie; Type: DATABASE; Schema: -; Owner: postgres
+--
+
+CREATE DATABASE lillie WITH TEMPLATE = template0 ENCODING = 'UTF8' LOCALE_PROVIDER = libc LOCALE = 'English_Australia.1252';
+
+
+ALTER DATABASE lillie OWNER TO postgres;
+
+\connect lillie
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -69,7 +93,7 @@ ALTER TABLE ONLY public.config
 
 
 --
--- TOC entry 4791 (class 0 OID 0)
+-- TOC entry 4792 (class 0 OID 0)
 -- Dependencies: 216
 -- Name: TABLE config; Type: ACL; Schema: public; Owner: postgres
 --
@@ -78,7 +102,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.config TO lillie;
 
 
 --
--- TOC entry 4792 (class 0 OID 0)
+-- TOC entry 4793 (class 0 OID 0)
 -- Dependencies: 215
 -- Name: TABLE stars; Type: ACL; Schema: public; Owner: postgres
 --
@@ -86,7 +110,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.config TO lillie;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.stars TO lillie;
 
 
--- Completed on 2024-10-22 14:07:33
+-- Completed on 2024-10-22 14:11:46
 
 --
 -- PostgreSQL database dump complete
