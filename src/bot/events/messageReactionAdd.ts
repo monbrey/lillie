@@ -98,6 +98,7 @@ export const execute: AsyncEventEmitterListenerForEvent<Client, typeof name> = a
 			timestamp: new Date().toISOString(),
 			url: messageLink(data.channel_id, data.message_id),
 		},
+		...embeds,
 	];
 
 	// Map attachments, using the embed multi-image trick

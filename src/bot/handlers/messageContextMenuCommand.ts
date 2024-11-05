@@ -20,7 +20,7 @@ export const handleMessageContextMenuCommand = async (api: API, interaction: API
 			interaction.id,
 			interaction.token,
 			{
-				content: `No command \`${interaction.data.name}\` was found. It may have been removed, or temporarily disabled. If you believe this is incorrect, contact monbrey.`,
+				content: `No command \`${interaction.data.name}\` was found.\nIt may have been removed, or temporarily disabled.\nIf you believe this is incorrect, contact monbrey.`,
 				flags: MessageFlags.Ephemeral,
 			},
 		);
