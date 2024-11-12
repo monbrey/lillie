@@ -6,8 +6,10 @@
   "type": "module",
   "scripts": {
     "build": "rimraf dist && eslint ./src --fix && tsc -p tsconfig.json",
-    "start": "node --env-file=.env.development.local ./dist/bot/index.js",
-    "start:deploy": "node --env-file=.env.development.local ./dist/bot/index.js --deploy",
+    "start": "node --env-file=.env ./dist/bot/index.js",
+    "start:dev": "node --env-file=.env.development.local ./dist/bot/index.js",
+    "start:deploy": "node --env-file=.env ./dist/bot/index.js --deploy",
+    "start:deploy:dev": "node --env-file=.env.development.local ./dist/bot/index.js --deploy",
     "test": "echo \"Error: no test specified\" && exit 1",
     "watch": "tsc -p tsconfig.json --watch"
   },
