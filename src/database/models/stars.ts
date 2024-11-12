@@ -42,7 +42,7 @@ export async function getStarByStarId(id: Snowflake) {
 
 export async function createStar(star: Star) {
 	const rows = await sql`
-		insert into stars 
+		insert into stars
 		${sql(star)} 
 		returning *
 	`;
@@ -64,12 +64,19 @@ export async function deleteStarBySourceId(id: Snowflake) {
 export async function incrementScoreForStar(id: Snowflake, premium: boolean) {
 	const col = premium ? "premium_score" : "score";
 
-	const rows = await sql`
-		update stars 
-		set ${col} = ${col} + 1
-		where message_id = ${id}
-		returning *
-	`;
+	const rows = await (premium ?
+		sql`
+			update stars 
+			set premium_score = premium_score + 1
+			where message_id = ${id}
+			returning *
+		` :
+		sql`
+			update stars 
+			set score = score + 1
+			where message_id = ${id}
+			returning *
+		`);
 
 	if (rows.length > 1) {
 		throw new Error("Too many rows returned.");
