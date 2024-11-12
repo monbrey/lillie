@@ -2,7 +2,7 @@ import type { Client } from "@discordjs/core";
 import { GatewayDispatchEvents } from "@discordjs/core";
 import type { AsyncEventEmitterListenerForEvent } from "@vladfrangu/async_event_emitter";
 import { getConfigForGuild } from "../../database/models/config.js";
-import { decrementScoreForStar, deleteStarBySourceId, getStarBySourceId } from "../../database/models/stars.js";
+import { updateScoreForStar, updatePremiumScoreForStar, deleteStarBySourceId, getStarBySourceId } from "../../database/models/stars.js";
 
 export const name = GatewayDispatchEvents.MessageReactionRemove;
 export const execute: AsyncEventEmitterListenerForEvent<Client, typeof name> = async ({ data, api }) => {
@@ -22,13 +22,13 @@ export const execute: AsyncEventEmitterListenerForEvent<Client, typeof name> = a
 
 	// Check if this emoji matches the config
 	const star = emoji === config.standard_emoji;
-	const premium = emoji === config.gold_emoji;
-	if (!star && !premium) {
+	const gold = emoji === config.gold_emoji;
+	if (!star && !gold) {
 		return;
 	}
 
 	// Determine thje relevant threshold
-	const threshold = premium ? config.gold_threshold : config.standard_threshold;
+	const threshold = gold ? config.gold_threshold : config.standard_threshold;
 
 	// Fetch any existing record for this message
 	const db_star = await getStarBySourceId(data.message_id);
@@ -50,7 +50,7 @@ export const execute: AsyncEventEmitterListenerForEvent<Client, typeof name> = a
 			// If reaction is still at or above the threshold, just do an update
 			embeds[0].author = { name: `${author.username}  |  ${count}${emoji}` };
 			await api.channels.editMessage(db_star.board_channel_id, db_star.board_message_id, { embeds });
-			await decrementScoreForStar(data.message_id, premium);
+			await (gold ? updatePremiumScoreForStar : updateScoreForStar)(db_star.message_id, count);
 		} else {
 			// Otherwise, delete the message and it's db record
 			await api.channels.deleteMessage(db_star.board_channel_id, db_star.board_message_id);

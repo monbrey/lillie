@@ -4,7 +4,7 @@ import { messageLink } from "@discordjs/formatters";
 import type { AsyncEventEmitterListenerForEvent } from "@vladfrangu/async_event_emitter";
 import { getConfigForGuild } from "../../database/models/config.js";
 import { getLastGoldsForUser, insertGoldForUser } from "../../database/models/golds.js";
-import { createStar, getStarBySourceId, incrementScoreForStar, type Star } from "../../database/models/stars.js";
+import { createStar, getStarBySourceId, updatePremiumScoreForStar, updateScoreForStar, type Star } from "../../database/models/stars.js";
 
 export const name = GatewayDispatchEvents.MessageReactionAdd;
 export const execute: AsyncEventEmitterListenerForEvent<Client, typeof name> = async ({ data, api }) => {
@@ -126,7 +126,7 @@ export const execute: AsyncEventEmitterListenerForEvent<Client, typeof name> = a
 		if (db_star) {
 			// Update the existing message
 			await api.channels.editMessage(db_star.board_channel_id, db_star.board_message_id, { embeds: _embeds });
-			await incrementScoreForStar(db_star.message_id, gold);
+			await (gold ? updatePremiumScoreForStar : updateScoreForStar)(db_star.message_id, count);
 		} else {
 			// Post and record a new message to the starboard
 			const star_message = await api.channels.createMessage(target_channel, { embeds: _embeds });

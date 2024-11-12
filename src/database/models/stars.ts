@@ -61,43 +61,24 @@ export async function deleteStarBySourceId(id: Snowflake) {
 	`;
 }
 
-export async function incrementScoreForStar(id: Snowflake, premium: boolean) {
-	const col = premium ? "premium_score" : "score";
-
-	const rows = await (premium ?
-		sql`
-			update stars 
-			set premium_score = premium_score + 1
-			where message_id = ${id}
-			returning *
-		` :
-		sql`
-			update stars 
-			set score = score + 1
-			where message_id = ${id}
-			returning *
-		`);
-
-	if (rows.length > 1) {
-		throw new Error("Too many rows returned.");
-	}
-
-	return rows.length ? rows[0] as Star : null;
-}
-
-export async function decrementScoreForStar(id: Snowflake, premium: boolean) {
-	const col = premium ? "premium_score" : "score";
-
+export async function updateScoreForStar(id: Snowflake, score: number) {
 	const rows = await sql`
 		update stars 
-		set ${col} = ${col} - 1
+		set score = ${score}
 		where message_id = ${id}
 		returning *
 	`;
 
-	if (rows.length > 1) {
-		throw new Error("Too many rows returned.");
-	}
+	return rows.length ? rows[0] as Star : null;
+}
+
+export async function updatePremiumScoreForStar(id: Snowflake, score: number) {
+	const rows = await sql`
+		update stars 
+		set premium_score = ${score}
+		where message_id = ${id}
+		returning *
+	`;
 
 	return rows.length ? rows[0] as Star : null;
 }
