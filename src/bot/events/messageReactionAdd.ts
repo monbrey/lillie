@@ -34,6 +34,14 @@ export const execute: AsyncEventEmitterListenerForEvent<Client, typeof name> = a
 	// Check if this is the gold emoji
 	const gold = emoji === config.gold_emoji;
 
+	// Fetch the message details
+	const { attachments, author, content, reactions, embeds } = await api.channels.getMessage(data.channel_id, data.message_id);
+
+	// Ignore if the author is reacting to their own message
+	if (author.id === data.user_id) {
+		return;
+	}
+
 	// Check if this message already exists on a starboard
 	const db_star = await getStarBySourceId(data.message_id);
 
@@ -69,9 +77,6 @@ export const execute: AsyncEventEmitterListenerForEvent<Client, typeof name> = a
 	if (!target_channel) {
 		return;
 	}
-
-	// Fetch the message details
-	const { attachments, author, content, reactions, embeds } = await api.channels.getMessage(data.channel_id, data.message_id);
 
 	// Check if the reaction count exceeds the threshold
 	const count = reactions?.find((reac) => (reac.emoji.id ?? reac.emoji.name) === emoji)?.count ?? 0;
