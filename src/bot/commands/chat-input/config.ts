@@ -121,13 +121,25 @@ export const execute = async (api: API, interaction: APIChatInputApplicationComm
 			config[subcommand.name === "standard" ? "standard_channel_id" : "gold_channel_id"] = option.value;
 		} else if (option.name === "emoji" && option.type === ApplicationCommandOptionType.String) {
 			const emoji = parseEmoji(option.value);
-			config[subcommand.name === "standard" ? "standard_emoji" : "gold_emoji"] = emoji?.id;
+			if (!emoji) {
+				return api.interactions.reply(
+					interaction.id,
+					interaction.token,
+					{
+						content: "Error updating configuration - invalid emoji",
+						flags: MessageFlags.Ephemeral,
+					},
+				);
+			}
+
+			config[subcommand.name === "standard" ? "standard_emoji" : "gold_emoji"] = emoji?.id ?? emoji?.name;
 		} else if (option.name === "threshold" && option.type === ApplicationCommandOptionType.Integer) {
 			config[subcommand.name === "standard" ? "standard_threshold" : "gold_threshold"] = option.value;
 		}
 	}
 
 	try {
+		console.log(config);
 		await updateConfigForGuild(config);
 		await api.interactions.reply(
 			interaction.id,

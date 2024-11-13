@@ -109,15 +109,11 @@ export const execute: AsyncEventEmitterListenerForEvent<Client, typeof name> = a
 	// Map attachments, using the embed multi-image trick
 	if (attachments.length) {
 		for (const att of attachments) {
-			switch (att.content_type) {
-				case "image":
-					_embeds.push({
-						url: messageLink(data.channel_id, data.message_id),
-						image: { url: att.url },
-					});
-					break;
-				default:
-					break;
+			if (att.content_type?.startsWith("image")) {
+				_embeds.push({
+					url: messageLink(data.channel_id, data.message_id),
+					image: { url: att.url },
+				});
 			}
 		}
 	}
